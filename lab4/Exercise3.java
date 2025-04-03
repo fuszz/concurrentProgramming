@@ -3,7 +3,7 @@ package lab4;
 import java.util.concurrent.Semaphore;
 
 
-class Buffer1 extends Thread{
+class Buffer extends Thread{
     static Semaphore existValue = new Semaphore(0);
     static Semaphore isFree = new Semaphore(1);
     float value;
@@ -24,10 +24,10 @@ class Buffer1 extends Thread{
 }
 
 class Consumer extends Thread {
-    Buffer1 b;
+    Buffer b;
 
 
-    Consumer(Buffer1 b){
+    Consumer(Buffer b){
         this.b = b;
     }
 
@@ -51,10 +51,10 @@ class Consumer extends Thread {
 
 
 class Producer extends Thread {
-    Buffer1 buffer1;
+    Buffer buffer;
 
-    Producer(Buffer1 buffer1){
-        this.buffer1 = buffer1;
+    Producer(Buffer buffer){
+        this.buffer = buffer;
     }
 
     float produce(){
@@ -72,7 +72,7 @@ class Producer extends Thread {
             try{sleep(500);} catch (InterruptedException e) {};
             float value = produce();
             System.out.println("Wyprodukowałem " + value);
-            buffer1.setValue(value);
+            buffer.setValue(value);
         }
     }
 
@@ -82,7 +82,7 @@ class Producer extends Thread {
 
 public class Exercise3 {
     public static void main(String[] args) {
-        Buffer1 b = new Buffer1();
+        Buffer b = new Buffer();
         Consumer c = new Consumer(b);
         Producer p = new Producer(b);
 
