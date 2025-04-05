@@ -1,7 +1,4 @@
-package lab4;
-
 import java.util.concurrent.Semaphore;
-
 
 class Buffer1 extends Thread{
     static Semaphore existValue = new Semaphore(0);

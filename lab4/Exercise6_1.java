@@ -3,8 +3,9 @@ package lab4;
 
 import java.util.concurrent.Semaphore;
 
-public class Exercise7 extends Thread {
+public class Exercise6_1 extends Thread {
     static final int N = 5; // Liczba widelców
+    static Semaphore diner = new Semaphore(N - 1);
 
     static Semaphore[] forks = new Semaphore[N];
     static {
@@ -13,7 +14,7 @@ public class Exercise7 extends Thread {
         }
     }
 
-    Exercise7(int number){
+    Exercise6_1(int number){
         super(Integer.toString(number));
     }
 
@@ -36,24 +37,22 @@ public class Exercise7 extends Thread {
         int number = Integer.parseInt(this.getName());
         thinking(number);
 
-        if(number == 0){
-            forks[(number+1)%N].acquireUninterruptibly();
-            forks[number].acquireUninterruptibly();
-        } else {
-            forks[number].acquireUninterruptibly();
-            forks[(number+1)%N].acquireUninterruptibly();
-        }
+        diner.acquireUninterruptibly();
+
+        forks[number].acquireUninterruptibly();
+        forks[(number+1)%N].acquireUninterruptibly();
         eating(number);
         forks[number].release();
         forks[(number+1)%N].release();
 
+        diner.release();
     }}
 
     public static void main(String[] args) {
-        Exercise7[] philosophers = new Exercise7[N];
+        Exercise6_1[] philosophers = new Exercise6_1[N];
 
         for(int i=0; i<N; i++){
-            philosophers[i] = new Exercise7(i);
+            philosophers[i] = new Exercise6_1(i);
             philosophers[i].start();
         }
     }
