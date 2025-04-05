@@ -1,6 +1,3 @@
-package lab4;
-
-
 import java.util.concurrent.Semaphore;
 
 public class Exercise6_2 extends Thread {

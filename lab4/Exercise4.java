@@ -1,16 +1,14 @@
-package lab4;
-
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-class Buffer {
+class Buffer2 {
     Semaphore elementExists;
     Semaphore placeExists;
     int size;
     AtomicIntegerArray value;
     int wy_ind, we_ind;
 
-    Buffer(int size) {
+    Buffer2(int size) {
         value = new AtomicIntegerArray(size);
         this.size = size;
         placeExists = new Semaphore(size);
