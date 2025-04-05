@@ -2,9 +2,9 @@ package lab4;
 
 import java.util.concurrent.Semaphore;
 
-class Buffer2 extends Thread{
+class Buffer3 extends Thread{
     private final int size;
-    private float[] table;
+    private int[] table;
 
     private Semaphore canRead = new Semaphore(1);
     private Semaphore canWrite = new Semaphore(1);
@@ -15,16 +15,16 @@ class Buffer2 extends Thread{
     private int writeIndex;
     private int readIndex;
 
-    Buffer2(int size){
+    Buffer3(int size){
         this.size = size;
-        this.table = new float[size];
+        this.table = new int[size];
         this.emptyPlaces = new Semaphore(size);
 
         this.writeIndex = 0;
         this.readIndex = 0;
     }
 
-    public void setValue(float value){
+    public void setValue(int value){
         canWrite.acquireUninterruptibly();
         emptyPlaces.acquireUninterruptibly();
 
@@ -35,11 +35,11 @@ class Buffer2 extends Thread{
         canWrite.release();
     }
 
-    public float getValue() {
+    public int getValue() {
         canRead.acquireUninterruptibly();
         fullPlaces.acquireUninterruptibly();
 
-        float v = table[this.readIndex];
+        int v = table[this.readIndex];
         this.readIndex = (this.readIndex + 1) % this.size;
 
         emptyPlaces.release();
@@ -49,55 +49,46 @@ class Buffer2 extends Thread{
 
 }
 
-class Consumer extends Thread {
-    Buffer2 b;
+class Consumer1 extends Thread {
+    Buffer3 b;
 
-    Consumer(Buffer2 b){
+    Consumer1(Buffer3 b){
         this.b = b;
     }
 
-    void consume(float value){
+    void consume(int value){
         System.out.println("Otrzymałem wartość " + value);
-        System.out.println(Math.sqrt(value));
-        System.out.println(Math.log(value));
-        System.out.println(Math.pow(value, 2));
-        System.out.println();
     }
 
     @Override
     public void run() {
         while(true){
             try{sleep(500);} catch (InterruptedException e){};
-            float value = b.getValue();
+            int value = b.getValue();
             consume(value);
         }
     }
 }
 
 
-class Producer extends Thread {
-    Buffer2 buffer2;
+class Producer1 extends Thread {
+    Buffer3 buffer3;
 
-    Producer(Buffer2 buffer2){
-        this.buffer2 = buffer2;
+    Producer1(Buffer3 buffer3){
+        this.buffer3 = buffer3;
     }
 
-    float produce(){
-        float avg_value = 0;
-        for(int i = 0; i < 20; i++){
-            avg_value += Math.random();
-        }
-        avg_value /= 20;
-        return avg_value;
+    int produce(){
+        return (int) Math.floor(Math.random()*100);
     }
 
     @Override
     public void run(){
         while(true){
             try{sleep(500);} catch (InterruptedException e) {};
-            float value = produce();
+            int value = produce();
             System.out.println("Wyprodukowałem " + value);
-            buffer2.setValue(value);
+            buffer3.setValue(value);
         }
     }
 
@@ -105,13 +96,17 @@ class Producer extends Thread {
 
 
 
-public class Exercise4 {
+public class Exercise5 {
     public static void main(String[] args) {
-        Buffer2 b = new Buffer2(2);
-        Consumer c = new Consumer(b);
-        Producer p = new Producer(b);
+        Buffer3 b = new Buffer3(2);
+        Consumer1 c = new Consumer1(b);
+        Producer1 p1 = new Producer1(b);
+        Producer1 p2 = new Producer1(b);
+        Producer1 p3 = new Producer1(b);
 
-        p.start();
         c.start();
+        p1.start();
+        p2.start();
+        p3.start();
     }
 }
